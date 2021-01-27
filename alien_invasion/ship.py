@@ -1,5 +1,5 @@
 import pygame
-
+from settings import Settings
 
 class Ship:
     def __init__(self, ai_game):
@@ -20,7 +20,7 @@ class Ship:
         self.x += self.settings.ship_speed
       if self.moving_left and self.rect.left > 0:
         self.x -= self.settings.ship_speed
-      self.x -= self.settings.ship_speed
+      #self.x -= self.settings.ship_speed
       self.rect.x = self.x
     
     def blitme(self):
