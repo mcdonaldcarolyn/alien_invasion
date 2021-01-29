@@ -1,5 +1,8 @@
 import sys
+from time import sleep
 from settings import Settings
+from game_stats import GameStats
+from button import Button
 import pygame
 from ship import Ship
 from bullet import Bullet
@@ -14,11 +17,13 @@ class AlienInvasion:
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
+        self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         print('in init')
         self._create_fleet()
+        self.play_button = Button(self, "Play")
         #print(self.setting.screen_width)
         
     def run_game(self):
@@ -81,11 +86,24 @@ class AlienInvasion:
         self.bullets.empty()
         self._create_fleet()
           
+    def _ship_hit(self):
+      self.stats.ships_left -= 1
+
+      self.alien.empty()
+      self.bullets.empty()
+
+      self._create_fleet()
+      self.ship.center_ship()
+
+      sleep (0.5)
+    
     def _update_aliens(self):
       self._check_fleet_edges()
       self.aliens.update()
+      if pygame.sprite.spritecollideany(self.ship, self.aliens):
+       self._ship_hit()
 
-
+  
     def _create_fleet(self):
       alien = Alien(self)
       alien_width, alien_height = alien.rect.size
@@ -124,6 +142,8 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
           bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        if not self.stats.game_active:
+          self.play_button.draw_button()
         pygame.display.flip()
             
 
